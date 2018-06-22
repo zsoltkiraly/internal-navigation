@@ -1,0 +1,195 @@
+menu {
+    position: fixed;
+    display: block;
+    width: 100%;
+    top: 0;
+    background-color: white;
+    z-index: 2;
+
+    @include transition(background-color .3s ease);
+    @include box-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+
+    nav {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-width: 1024px;
+        margin: 0 auto;
+        padding: 20px 20px 30px;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            display: block;
+            width: 100%;
+
+            @include flex-box();
+            @include align-items(center);
+            @include flex-wrap(wrap);
+
+            li {
+                list-style-type: none;
+                display: inline-block;
+                position: relative;
+                color: $black;
+                font-weight: bold;
+                margin: 0;
+                padding: 0;
+                margin-left: 40px;
+                cursor: pointer;
+
+                @include transition(color .3s ease);
+
+                &:first-child { margin-left: 0; }
+                &:last-child { padding-right: 0; }
+                &:hover { color: $blue; }
+
+                &:before,
+                &:after {
+                    content: '';
+                    position: absolute;
+                    bottom: -12px;
+
+                    @include opacity(0);
+                    @include transition(opacity .3s ease);
+                }
+
+                &:before {
+                    width: 100%;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background-color: $gray;
+                }
+
+                &:after {
+                    width: calc(100% - 36px);
+                    left: 50%;
+                    height: 4px;
+                    background-color: $black;
+
+                    @include translate(-50%, 0);
+                }
+
+                &.active { &:before, &:after { @include opacity(1); }
+
+                }
+            }
+        }
+    }
+
+    &.scroll {
+        background-color: $blue;
+        nav ul li {
+            color: white;
+
+            &:hover { color: $black; }
+        }
+    }
+}
+
+section.scroll-element {
+    position: relative;
+    width: 100%;
+    max-width: 1024px;
+    display: block;
+    margin: 50px auto;
+    padding: 0 20px;
+    min-height: 500px;
+
+    img {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+    }
+
+    h2 {
+        font-size: 2em;
+        color: $blue;
+        margin: 0 0 15px;
+        line-height: 1;
+
+        @include flex-box();
+        @include align-items(center);
+
+        span {
+            position: relative;
+            top: 2px;
+            padding-left: 10px;
+            font-size: .5em;
+            color: $black;
+        }
+    }
+}
+
+
+section.sidebar-navigation {
+    position: fixed;
+    top: calc(50% - 60px);
+    display: block;
+    height: auto;
+    right: 20px;
+
+    @include translateX(-50%);
+
+    ul {
+        li {
+            position: relative;
+            list-style-type: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 100%;
+            background-color: $gray;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: 1px solid $gray;
+
+            &:before {
+                content: '';
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                border-radius: 100%;
+                top: 50%;
+                left: 50%;
+                z-index: 2;
+                background-color: $gray;
+
+                @include translate(-50%, -50%);
+                @include transition(background-color .3s ease-in-out);
+            }
+            &.active:before,
+            &:hover:before {
+                background-color: $blue;
+            }
+
+            &:last-child { margin-bottom: 0; }
+        }
+    }
+
+    .scroll-line {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        width: 6px;
+        height: calc(100% - 6px);
+        left: 50%;
+        background-color: $gray;
+        z-index: 0;
+        border: 1px solid $gray;
+
+        @include translateX(-50%);
+
+        .line {
+            position: absolute;
+            width: 2px;
+            height: auto;
+            left: 50%;
+            background-color: $blue;
+            z-index: 0;
+            border-radius: 1px;
+
+            @include translateX(-50%);
+        }
+    }
+}
