@@ -1,7 +1,30 @@
+'use strict';
+
 /*
 Internal navigation - Code by Zsolt Király
 v1.0.9 - 2018-04-17
 */
+
+function hasTouch() {
+    return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
+
+if (hasTouch()) {
+    try {
+        for (var si in document.styleSheets) {
+            var styleSheet = document.styleSheets[si];
+            if (!styleSheet.rules) continue;
+
+            for (var ri = styleSheet.rules.length - 1; ri >= 0; ri--) {
+                if (!styleSheet.rules[ri].selectorText) continue;
+
+                if (styleSheet.rules[ri].selectorText.match(':hover')) {
+                    styleSheet.deleteRule(ri);
+                }
+            }
+        }
+    } catch (ex) {}
+}
 
 function getElemDistance(element) {
     var location = 0;
@@ -39,6 +62,10 @@ var menuFixed = function() {
 }();
 
 var scrollAnimation = function() {
+
+    function getWidth() {
+        return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    }
 
     function getMenuHeight() {
         return document.querySelector('menu').offsetHeight;
@@ -93,6 +120,21 @@ var scrollAnimation = function() {
         });
     }
 
+    function resize() {
+        menuFixed.menu();
+
+        var cachedWidth = getWidth();
+
+        window.addEventListener('resize', function() {
+            var newWidth = getWidth();
+
+            if(newWidth !== cachedWidth) {
+                menuFixed.menu();
+            }
+        }, false);
+
+    }
+
     function scrollMax(iN) {
         window.addEventListener('scroll', function() {
             var scrollMax = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -124,7 +166,7 @@ var scrollAnimation = function() {
 
         forEach(scrollElement, function(index, scrollElements) {
             var menuElement = iN.querySelectorAll('.menu li');
-            menuElement[0].classList.add('active');
+            //menuElement[0].classList.add('active');
 
             forEach(menuElement, function(index, menuElements) {
                 menuElements.addEventListener('click', function() {
@@ -170,7 +212,7 @@ var scrollAnimation = function() {
         sidebarDiv.setAttribute('class', 'sidebar-navigation');
         document.body.insertBefore(sidebarDiv, document.body.firstChild);
 
-        sidebarDiv.innerHTML = '<div class="scroll-line"><div class="line" style="height: 0px;"></div></div><ul></ul>';
+        sidebarDiv.innerHTML = '<ul></ul>';
 
         var menuElement = iN.querySelectorAll('.menu li'),
             menuLen = menuElement.length,
@@ -178,13 +220,13 @@ var scrollAnimation = function() {
 
         var stop = 0;
         while (stop < menuLen) {
-            sidebar.innerHTML += '<li></li>';
+            sidebar.innerHTML += '<li data-number="' + (stop + 1) + '"><span class="circle"></span><span class="stripe"></span></li>';
             stop++;
         }
 
         var sidebarLi = iN.querySelectorAll('.sidebar-navigation ul li');
 
-        sidebarLi[0].classList.add('active');
+        //sidebarLi[0].classList.add('active');
 
         var sidebarLiArray = [],
             i = 0,
@@ -220,22 +262,17 @@ var scrollAnimation = function() {
         }
     }
 
-    function scrollLine(iN) {
-        var firstScrollElement = getElemDistance(iN.querySelectorAll('.scroll-element')[0]),
-            h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
-            windowScrollHeight = document.body.scrollHeight - h,
-            scrollLineHeight = iN.querySelector('.scroll-line').offsetHeight,
-            windowRatio = windowScrollHeight / scrollLineHeight;
+    function setId(iN) {
+        var sidebarElements = iN.querySelectorAll('.sidebar-navigation ul li'),
+            scrollElements = iN.querySelectorAll('.scroll-element');
 
-        window.addEventListener('scroll', function() {
-            if (firstScrollElement < document.body.scrollTop || firstScrollElement < document.documentElement.scrollTop) {
-                var ratio = (window.pageYOffset - firstScrollElement) / windowRatio;
-
-                if (ratio <= scrollLineHeight) {
-                    iN.querySelector('.scroll-line .line').style.height = ratio + 'px';
+        forEach(sidebarElements, function(index, sidebarElement) {
+            forEach(scrollElements, function(index, scrollElement) {
+                if(scrollElement.getAttribute('data-id') == sidebarElement.getAttribute('data-id')) {
+                    scrollElement.setAttribute('data-number', parseFloat(sidebarElement.getAttribute('data-number')));
                 }
-            }
-        }, false);
+            });
+        });
     }
 
     function setActive(iN) {
@@ -269,19 +306,65 @@ var scrollAnimation = function() {
                     var sidebarLi = iN.querySelectorAll('.sidebar-navigation ul li');
                     active(sidebarLi);
                 }
+
+                setTimeout(function() {
+                    var sidebarLiActive = document.querySelector('.sidebar-navigation ul li.active');
+
+                    if(sidebarLiActive) {
+                        var activeLiId = parseFloat(sidebarLiActive.getAttribute('data-number'));
+                        var sidebarLis = document.querySelectorAll('.sidebar-navigation ul li');
+
+                        forEach(sidebarLis, function(index, sidebarLi) {
+
+                            var allScrollLiId = parseFloat(sidebarLi.getAttribute('data-number'));
+
+                            if(allScrollLiId < activeLiId) {
+                                sidebarLi.classList.add('before-line');
+
+                            } else {
+                                sidebarLi.classList.remove('before-line');
+                            }
+                        });
+                    }
+                }, 50);
+
             }, false);
         });
+    }
+
+    function setFirst(iN) {
+        window.addEventListener('scroll', function() {
+
+            var sidebarLi = iN.querySelectorAll('.sidebar-navigation ul li'),
+                menuLi = iN.querySelectorAll('.menu li'),
+                scrollActive = iN.querySelectorAll('.scroll-element');
+
+            var firstScrollElement = scrollActive[0],
+                sidebarLiFirst = sidebarLi[0],
+                menuLiFirst = menuLi[0];
+
+            var firstElementTop = getElemDistance(firstScrollElement) - getMenuHeight();
+
+            if(window.pageYOffset != 0) {
+                if (window.pageYOffset < firstElementTop) {
+                    sidebarLiFirst.classList.remove('active');
+                    menuLiFirst.classList.remove('active');
+                }
+            }
+        }, false);
     }
 
     function app() {
         var internalNavigation = document.querySelector('html.internal-navigation');
 
         if(internalNavigation) {
+            resize();
             scrollPosition(internalNavigation, config);
             setActive(internalNavigation);
             sidebarNavigation(internalNavigation, config);
-            scrollLine(internalNavigation);
+            setId(internalNavigation);
             scrollMax(internalNavigation);
+            setFirst(internalNavigation);
         }
     }
 
