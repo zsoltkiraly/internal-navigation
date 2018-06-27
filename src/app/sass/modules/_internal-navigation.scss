@@ -86,29 +86,16 @@ menu {
             &:hover { color: $black; }
         }
     }
-    @media only screen and (max-width: $tablet) {
-        display: none;
-    }
-}
-
-header {
-    @media only screen and (max-width: $tablet) {
-        margin-top: 0 !important;
-    }
 }
 
 section.scroll-element {
     position: relative;
     width: 100%;
-    max-width: 1184px;
+    max-width: 1024px;
     display: block;
     margin: 50px auto;
-    padding: 0 80px;
+    padding: 0 20px;
     min-height: 500px;
-
-    @media only screen and (max-width: $mobile) {
-        padding: 0 60px 0 20px;
-    }
 
     img {
         width: 100%;
@@ -133,16 +120,6 @@ section.scroll-element {
             color: $black;
         }
     }
-
-    @media only screen and (max-width: $tablet) {
-        h2 {
-            @include flex-box();
-            @include align-items(flex-start);
-            @include flex-direction(column);
-
-            span { padding: 10px 0 0; }
-        }
-    }
 }
 
 
@@ -152,100 +129,22 @@ section.sidebar-navigation {
     display: block;
     height: auto;
     right: 20px;
-    z-index: 3;
 
     @include translateX(-50%);
 
-    @media only screen and (max-width: $mobile) {
-        right: 10px;
-    }
-
     ul {
-        margin: 0;
-        padding: 0;
-
         li {
             position: relative;
             list-style-type: none;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
+            border-radius: 100%;
+            background-color: $gray;
             margin-bottom: 20px;
+            cursor: pointer;
+            border: 1px solid $gray;
 
-            span {
-                &.circle {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 100%;
-                    background-color: $gray;
-                    cursor: pointer;
-                    z-index: 1;
-                    border: 2px solid $gray;   
-                }
-
-                &.stripe {
-                    content: '';
-                    position: absolute;
-                    width: 8px;
-                    height: 25px;
-                    bottom: -23px;
-                    z-index: 2;
-                    left: 50%;
-                    border-left: 2px solid $gray;
-                    border-right: 2px solid $gray;
-                    background-color: $gray;
-                    
-                    @include translateX(-50%);
-                }
-            }
-
-            &:last-child span.stripe { display: none; }
-
-            &.before-line span {
-                &.circle {
-                    border: 2px solid $blue;
-                }
-
-                &.stripe {
-                    border-left: 2px solid $blue;
-                    border-right: 2px solid $blue;
-                }
-            }
-
-            &.active span.circle {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 20px;
-                height: 20px;
-                border-radius: 100%;
-                background-color: $gray;
-                cursor: pointer;
-                z-index: 3;
-                border: 2px solid $blue;
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 100%;
-                    top: 50%;
-                    left: 50%;
-                    background-color: $blue;
-
-                    @include translate(-50%, -50%);
-                }
-            }
-
-            &:hover span.circle {
-                border: 2px solid $blue;
-                z-index: 4;
-            }
-
-            &:hover span.circle:before {
+            &:before {
                 content: '';
                 position: absolute;
                 width: 10px;
@@ -253,10 +152,44 @@ section.sidebar-navigation {
                 border-radius: 100%;
                 top: 50%;
                 left: 50%;
-                background-color: $blue;
+                z-index: 2;
+                background-color: $gray;
 
                 @include translate(-50%, -50%);
+                @include transition(background-color .3s ease-in-out);
             }
+            &.active:before,
+            &:hover:before {
+                background-color: $blue;
+            }
+
+            &:last-child { margin-bottom: 0; }
+        }
+    }
+
+    .scroll-line {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        width: 6px;
+        height: calc(100% - 6px);
+        left: 50%;
+        background-color: $gray;
+        z-index: 0;
+        border: 1px solid $gray;
+
+        @include translateX(-50%);
+
+        .line {
+            position: absolute;
+            width: 2px;
+            height: auto;
+            left: 50%;
+            background-color: $blue;
+            z-index: 0;
+            border-radius: 1px;
+
+            @include translateX(-50%);
         }
     }
 }
