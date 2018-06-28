@@ -172,6 +172,8 @@ section.sidebar-navigation {
             margin-bottom: 20px;
 
             span {
+                @include transition(border-color .3s ease);
+
                 &.circle {
                     position: absolute;
                     top: 0;
@@ -182,7 +184,21 @@ section.sidebar-navigation {
                     background-color: $gray;
                     cursor: pointer;
                     z-index: 1;
-                    border: 2px solid $gray;   
+                    border: 2px solid $gray;
+
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 100%;
+                        top: 50%;
+                        left: 50%;
+                        background-color: $gray;
+
+                        @include transition(background-color .3s ease);
+                        @include translate(-50%, -50%);
+                    }
                 }
 
                 &.stripe {
@@ -226,18 +242,7 @@ section.sidebar-navigation {
                 z-index: 3;
                 border: 2px solid $blue;
 
-                &:before {
-                    content: '';
-                    position: absolute;
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 100%;
-                    top: 50%;
-                    left: 50%;
-                    background-color: $blue;
-
-                    @include translate(-50%, -50%);
-                }
+                &:before { background-color: $blue; }
             }
 
             &:hover span.circle {
