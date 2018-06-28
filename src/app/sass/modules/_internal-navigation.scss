@@ -148,13 +148,13 @@ section.scroll-element {
 
 section.sidebar-navigation {
     position: fixed;
-    top: calc(50% - 60px);
+    top: 50%;
     display: block;
     height: auto;
     right: 20px;
     z-index: 3;
 
-    @include translateX(-50%);
+    @include translateY(-50%);
 
     @media only screen and (max-width: $mobile) {
         right: 10px;
