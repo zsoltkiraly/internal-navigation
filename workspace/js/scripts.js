@@ -1,9 +1,9 @@
-'use strict';
-
 /*
 Internal navigation - Code by Zsolt Király
 v1.0.9 - 2018-04-17
 */
+
+'use strict';
 
 function hasTouch() {
     return 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
